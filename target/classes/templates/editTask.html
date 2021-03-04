@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:insert="blocks/head :: head" />
+<body>
+<div th:replace="blocks/navbar :: navbar" />
+
+<div class="container mt-5">
+    <form method="post">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Название:</label>
+            <div class="col-sm-6">
+                <input type="text" name="name" class="form-control" placeholder="Название задания" th:value="${name}"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Текст:</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" name="testText" id="exampleFormControlTextarea1" rows="3" th:value="${testText}"></textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Вход:</label>
+            <div class="col-sm-6">
+                <input type="text" name="inputTask" class="form-control" placeholder="Входные параметры" th:value="${inputTask}"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Выходные:</label>
+            <div class="col-sm-6">
+                <input type="text" name="answer" class="form-control" placeholder="Выходные параметры" th:value="${answer}"/>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+</div>
+<div th:replace="blocks/jsImport :: jsImport" />
+</body>
+</html>

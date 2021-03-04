@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="blocks/head :: head" />
+<body>
+	<div th:replace="blocks/navbar :: navbar" />
+
+	<div class="container mt-5">
+		<h5>Главная страница</h5>
+	</div>
+
+	<div th:replace="blocks/jsImport :: jsImport" />
+</body>
+</html>

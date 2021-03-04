@@ -1,0 +1,68 @@
+<th:block th:fragment="jsImport" xmlns:th="">
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+		integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script>
+
+		$(document).ready(function(){
+			$(".compileButton").click(function(){
+
+				var $_target = $(this).data("compile");
+				var $_input = $(this).data("input");
+				var $_lang = $('#floatingSelect' + $_target).val();
+
+				$_input = $_input.split(' ').join('\n');
+
+				//alert($_input);
+				//alert($_target);
+
+				var to_compile = {
+					"LanguageChoice": $_lang,
+					"Program": $("#code" + $_target).val(),
+					"Input": $_input,
+					"CompilerArgs" : ""
+				};
+
+				$.ajax ({
+					url: "https://rextester.com/rundotnet/api",
+					type: "POST",
+					data: to_compile
+				}).done(function(data) {
+					if(data.Result){
+						document.getElementById("output" + $_target).innerHTML=data.Result;
+
+						var request = new XMLHttpRequest();
+						request.open('GET', 'http://localhost:8080/task/' + $_target + '/' + data.Result + '/');
+						request.send();
+					} else {
+						document.getElementById("output" + $_target).innerHTML=data.Errors;
+					}
+					//alert(JSON.stringify(data));
+				}).fail(function(data, err) {
+					alert("fail " + JSON.stringify(data) + " " + JSON.stringify(err));
+				});
+
+<!--				$.ajax-->
+<!--				({-->
+<!--					type: "GET",//Метод передачи-->
+<!--					data: dataRes,//Передаваемые данные в JSON - формате-->
+<!--					url: 'http://localhost:8080/task/' + $_target + '/' + $_output + '/'   //Название сервлета-->
+<!--				});-->
+
+
+
+			});
+    	});
+
+    </script>
+
+
+</th:block>
