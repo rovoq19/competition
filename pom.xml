@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.rovoq</groupId>
-	<artifactId>electio</artifactId>
+	<artifactId>competition</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>electio</name>
-	<description>Online voting system</description>
+	<name>competition</name>
+	<description>Online testing system</description>
 
 	<properties>
 		<java.version>11</java.version>
