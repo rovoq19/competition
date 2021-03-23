@@ -1,13 +1,57 @@
 package com.rovoq.electio;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@RunWith(SpringRunner.class)
 @SpringBootTest
-class CompetitionApplicationTests {
+@AutoConfigureMockMvc
+public class CompetitionApplicationTests {
+	@Autowired
+	private MockMvc mockMvc;
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() throws Exception {
+		this.mockMvc.perform(get("/"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("Привет, гость!")))
+				.andExpect(content().string(containsString("Добро пожаловать на онлайн-платформу для проведения соревнований по программированию.")));
 	}
 
+	@Test
+	public void accessDeniedTest() throws Exception {
+		this.mockMvc.perform(get("/main"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("http://localhost/login"));
+	}
+
+	@Test
+	public void correctLoginTest() throws Exception {
+		this.mockMvc.perform(formLogin().user("user").password("user"))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/"));
+	}
+
+	@Test
+	public void badCredentials() throws Exception {
+		this.mockMvc.perform(post("/login").param("username", "nikolay"))
+				.andDo(print())
+				.andExpect(status().isFound());
+	}
 }

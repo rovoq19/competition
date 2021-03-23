@@ -57,7 +57,7 @@ public class User implements UserDetails, Serializable{
             property = "id",
             generator = ObjectIdGenerators.PropertyGenerator.class
     )
-    private Set<Test> subscriptions = new HashSet<>();
+    private Set<Exam> subscriptions = new HashSet<>();
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();

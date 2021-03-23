@@ -10,6 +10,9 @@ create table tests (
     name varchar(255),
     description varchar(255),
     creator int8 not null,
+    start timestamp not null,
+    stop timestamp not null,
+    creation_date varchar(255) not null,
     primary key (id)
 );
 

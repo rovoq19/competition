@@ -10,9 +10,6 @@
         <module name="competition" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="competition" target="11" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

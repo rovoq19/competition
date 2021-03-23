@@ -19,7 +19,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String testText;
+    private String examText;
     private String inputTask;
     private String answer;
 
@@ -34,13 +34,13 @@ public class Task {
             property = "id",
             generator = ObjectIdGenerators.PropertyGenerator.class
     )
-    private Set<Test> testSubscriptions = new HashSet<>();
+    private Set<Exam> ExamSubscriptions = new HashSet<>();
 
     public Task() {}
 
-    public Task(String name, String testText, String inputTask, String answer) {
+    public Task(String name, String examText, String inputTask, String answer) {
         this.name = name;
-        this.testText = testText;
+        this.examText = examText;
         this.inputTask = inputTask;
         this.answer = answer;
     }
