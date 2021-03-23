@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="blocks/head :: head" />
+<body>
+<div th:replace="blocks/navbar :: navbar" />
+
+<div class="container mt-5">
+    <h1>Список тестов</h1>
+
+    <div class="card mt-5" th:each="test : ${tests}">
+        <div class="card-header" style="display: flex; justify-content: space-between">
+            <h5 th:text="${test.name}" />
+            <i th:text="${test.creationDate}"/>
+        </div>
+        <div class="card-body">
+            <p class="card-text" th:text="${test.description}" />
+            <p class="card-text"><i th:text="'Время начала: ' + ${test.start}"/></p>
+            <p class="card-text"><i th:text="'Время окончания: ' + ${test.stop}"/></p>
+            <a th:href="'/test/'+${test.id}+'/subscribe'" class="btn btn-primary">Открыть</a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="blocks/jsImport :: jsImport" />
+</body>
+</html>

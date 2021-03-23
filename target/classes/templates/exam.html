@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:insert="blocks/head :: head" />
+<body>
+<div th:replace="blocks/navbar :: navbar" />
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title" th:text="${test.name}"/>
+        <h6 class="card-subtitle mb-2 text-muted">Описание</h6>
+        <p class="card-text" th:text="${test.description}"/>
+        <a class="btn btn-primary mb-2" th:if="${user.id} == ${test.creator}" role="button" th:href="${test.id} + '/edit'" >Изменить тест</a>
+        <h6 class="card-subtitle mb-2 text-muted">Задания</h6>
+
+            <div class="panel-group mb-2" id="accordion">
+                <!-- 1 панель -->
+                <div class="panel panel-default" th:each="task : ${tasks}">
+                    <!-- Заголовок 1 панели -->
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" th:href="'#collapse' + ${task.id}" th:text="${task.name}"/>
+                        </h4>
+                    </div>
+                    <div th:id="'collapse' + ${task.id}" class="panel-collapse collapse in">
+                        <!-- Содержимое 1 панели -->
+                        <div class="panel-body">
+                            <p th:text="${task.testText}"/>
+                            <div class="mb-3">
+                                <label class="form-label">Код</label>
+
+                                <div class="form-floating">
+                                    <select class="form-select" th:id="'floatingSelect' + ${task.id}" aria-label="Floating label select example">
+                                        <option selected value="1">C#</option>
+                                        <option value="7">C++</option>
+                                        <option value="24">Python</option>
+                                        <option value="4">Java</option>
+                                        <option value="9">Pascal</option>
+                                    </select>
+                                    <label>Язык программирования</label>
+                                </div>
+
+                                <div th:id="'output' + ${task.id}"></div>
+
+                                <textarea th:id="'code' + ${task.id}" class="form-control" rows="20">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace Rextester
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            //Your code goes here
+            Console.WriteLine("Hello, world!");
+        }
+    }
+}
+                                </textarea>
+                            </div>
+                            <input type="hidden" th:value="${task.id}" name="taskID" id="taskID">
+                            <button class="btn btn-primary compileButton" id="run" th:data-compile="${task.id}" th:data-input="${task.inputTask}">Отправить на проверку</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <h6 class="card-subtitle mb-2 text-muted">Результаты</h6>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Задание</th>
+                <th scope="col">Пользователь</th>
+                <th scope="col">Результат</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="result : ${results}">
+                <td th:text="${result.task}"/>
+                <td th:text="${result.userName}"/>
+                <td th:text="${result.result}"/>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div th:replace="blocks/jsImport :: jsImport" />
+</body>
+</html>
