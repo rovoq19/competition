@@ -10,8 +10,10 @@ import com.rovoq.electio.repos.TestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -28,23 +30,25 @@ public class TestService {
     @Autowired
     private ResultRepo resultRepo;
 
-//    private Test test;
-
-    public void addTest(User user, String name, String description){
+    public void addTest(User user, String name, String description, Timestamp start, Timestamp stop){
         Test test = new Test();
 
         test.setName(name);
         test.setDescription(description);
         test.setCreator(user.getId());
+        test.setStart(start);
+        test.setStop(stop);
+        test.setCreationDate(new SimpleDateFormat("yyyy.MM.dd").format(new Date()));
 
         testRepo.save(test);
     }
 
-    public void updateTest(User user, Test test, String name, String description){
-//        test = findById(testId).get();
+    public void updateTest(User user, Test test, String name, String description, Timestamp start, Timestamp stop){
         if(user.getId().equals(test.getCreator())){
             test.setName(name);
             test.setDescription(description);
+            test.setStart(start);
+            test.setStop(stop);
 
             testRepo.save(test);
         }
@@ -53,18 +57,6 @@ public class TestService {
     public List<Test> findAll() {
         return testRepo.findAll();
     }
-    public Optional<Test> findById(Long id) {
-
-        return testRepo.findById(id);
-    }
-
-//    public Optional<Task> findTask(Long id){
-//
-////        Set<Task> tasks = test.getTaskSubscribers();
-////        System.out.println(tasks);
-////        return tasks;
-//        return taskRepo.findById(id);
-//    }
 
     public void subscribe(User currentUser, Test test) {
         Set<User> subscribers = test.getSubscribers();
@@ -86,11 +78,26 @@ public class TestService {
         testRepo.save(test);
     }
 
+    public boolean findByUserName(Long testId, String userName){
+        List<Result> results = resultRepo.findAll();
+        for(Result result:results){
+            if (result.getTest().equals(testId) & result.getUserName().equals(userName)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addResult(Test test, Task task, User user, String result){
 
-        Result res = new Result(test.getId(), task.getName(), user.getUsername(), result);
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        resultRepo.save(res);
+        if(!findByUserName(test.getId(),user.getUsername())){
+            if(timestamp.getTime() >= test.getStart().getTime() & timestamp.getTime() <= test.getStop().getTime()){
+                Result res = new Result(test.getId(), task.getName(), user.getUsername(), result);
+                resultRepo.save(res);
+            }
+        }
     }
 
     public List<Result> findResults(Long testId){

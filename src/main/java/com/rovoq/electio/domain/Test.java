@@ -1,14 +1,15 @@
 package com.rovoq.electio.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +24,11 @@ public class Test implements Serializable {
     private String name;
     private String description;
     private Long creator;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Timestamp start;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Timestamp stop;
+    private String creationDate;
 
     @ManyToMany
     @JoinTable(

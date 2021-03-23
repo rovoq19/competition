@@ -1,21 +1,20 @@
 package com.rovoq.electio.controller;
 
-import com.rovoq.electio.domain.Role;
 import com.rovoq.electio.domain.Task;
 import com.rovoq.electio.domain.Test;
 import com.rovoq.electio.domain.User;
+import com.rovoq.electio.repos.UserRepo;
 import com.rovoq.electio.service.TestService;
-import org.bouncycastle.math.raw.Mod;
+import com.rovoq.electio.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/test")
@@ -29,10 +28,14 @@ public class TestController {
     }
 
     @PostMapping("create")
-    public String testAdd(@AuthenticationPrincipal User user, @RequestParam String name,
-                          @RequestParam String description) {
+    public String testAdd(
+            @AuthenticationPrincipal User user,
+            @RequestParam String name,
+            @RequestParam String description,
+            @RequestParam Timestamp start,
+            @RequestParam Timestamp stop) {
 
-        testService.addTest(user, name, description);
+        testService.addTest(user, name, description, start, stop);
 
         return "redirect:/test/list";
     }
@@ -45,37 +48,30 @@ public class TestController {
 
     @GetMapping("{testId}")
     public String getTest(@AuthenticationPrincipal User user, @PathVariable("testId") Test test, Model model) {
-//        Test tst = testService.findById(testId).get();
 
-        model.addAttribute("test",test);
-        model.addAttribute("user", user);
-        model.addAttribute("tasks", test.getTaskSubscribers());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        model.addAttribute("results", testService.findResults(test.getId()));
-//        System.out.println(testService.findResults(test.getId()));
-
-        return "test";
+        if(timestamp.getTime() >= test.getStart().getTime() & timestamp.getTime() <= test.getStop().getTime() | test.getCreator().equals(user.getId())){
+            model.addAttribute("test",test);
+            model.addAttribute("user", user);
+            model.addAttribute("tasks", test.getTaskSubscribers());
+            model.addAttribute("results", testService.findResults(test.getId()));
+            return "test";
+        }else{
+            model.addAttribute("res","Тест еще не начался или уже закончился");
+            return "timeOutTest";
+        }
     }
 
     @PostMapping("{testId}")
     public String getTestResult(@AuthenticationPrincipal User user, @PathVariable("testId") Test test,
                                 @RequestParam String taskID, @RequestParam String taskCode, Model model) {
 
-//        System.out.println(taskID);
-//        System.out.println(taskCode);
-
         return "redirect:/test/" + test.getId();
     }
 
-//    @GetMapping("compile")
-//    public String compile() {
-//        return "codeCompiling";
-//    }
-
     @GetMapping("{testId}/subscribe")
     public String subscribeTest(@AuthenticationPrincipal User user, @PathVariable("testId") Test test) {
-//        Test tst = testService.findById(testId).get();
-////        System.out.println(tst);
         testService.subscribe(user, test);
 
         return "redirect:/test/" + test.getId();
@@ -86,14 +82,22 @@ public class TestController {
         model.addAttribute("name", test.getName());
         model.addAttribute("description", test.getDescription());
         model.addAttribute("testId", test.getId());
+        model.addAttribute("start", test.getStart());
+        model.addAttribute("stop", test.getStop());
+
         return "editTest";
     }
 
     @PostMapping("{testId}/edit")
-    public String editTest(@AuthenticationPrincipal User user, @PathVariable("testId") Test test, @RequestParam String name,
-                           @RequestParam String description) {
+    public String editTest(
+            @AuthenticationPrincipal User user,
+            @PathVariable("testId") Test test,
+            @RequestParam String name,
+            @RequestParam String description,
+            @RequestParam Timestamp start,
+            @RequestParam Timestamp stop) {
 
-        testService.updateTest(user, test, name, description);
+        testService.updateTest(user, test, name, description, start, stop);
 
         return "redirect:/test/" + test.getId();
     }
@@ -104,16 +108,18 @@ public class TestController {
     }
 
     @PostMapping("{testId}/edit/addtask")
-    public String addTask(@AuthenticationPrincipal User user,
+    public String addTask(
+            @AuthenticationPrincipal User user,
             @RequestParam String name,
             @RequestParam String testText,
             @RequestParam String inputTask,
             @RequestParam String answer,
             @PathVariable("testId") Test test) {
+
         Task task = new Task(name, testText, inputTask, answer);
         testService.addTask(task, test);
 
-        return "redirect:/test/" + test.getId() + "/edit";
+        return "redirect:/test/" + test.getId();
     }
 
 }

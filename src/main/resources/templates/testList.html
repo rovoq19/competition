@@ -8,9 +8,14 @@
     <h1>Список тестов</h1>
 
     <div class="card mt-5" th:each="test : ${tests}">
-        <h5 class="card-header" th:text="${test.name}"/>
+        <div class="card-header" style="display: flex; justify-content: space-between">
+            <h5 th:text="${test.name}" />
+            <i th:text="${test.creationDate}"/>
+        </div>
         <div class="card-body">
             <p class="card-text" th:text="${test.description}" />
+            <p class="card-text"><i th:text="'Время начала: ' + ${test.start}"/></p>
+            <p class="card-text"><i th:text="'Время окончания: ' + ${test.stop}"/></p>
             <a th:href="'/test/'+${test.id}+'/subscribe'" class="btn btn-primary">Открыть</a>
         </div>
     </div>
